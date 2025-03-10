@@ -123,6 +123,14 @@ async function copyIssues(milestoneMap) {
 
       if (existingIssueMap.has(issue.title)) {
         const existingIssue = existingIssueMap.get(issue.title);
+        if (existingIssue.body !== issue.body) {
+          console.log(`🔄 Updating body content for issue: ${issue.title}`);
+          await axios.patch(`${GITHUB_API}/${DEST_REPO}/issues/${existingIssue.number}`, {
+            body: issue.body || '',
+          }, HEADERS);
+        } else {
+          console.log(`🔄 Skipping existing issue body: ${issue.title} (Body is unchanged)`);
+        }
 
         if (
           issue.milestone &&
@@ -134,7 +142,7 @@ async function copyIssues(milestoneMap) {
             milestone: milestoneMap[issue.milestone.number],
           }, HEADERS);
         } else {
-          console.log(`🔄 Skipping existing issue: ${issue.title} (Milestone is correct)`);
+          console.log(`🔄 Skipping existing issue milestone: ${issue.title} (Milestone is correct)`);
         }
         continue;
       }
