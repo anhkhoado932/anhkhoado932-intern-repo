@@ -3,9 +3,9 @@ const axios = require('axios');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const SOURCE_REPO = process.env.SOURCE_REPO;
-const DEST_REPO = process.env.DEST_REPO;
+const DEST_REPOS = JSON.parse(process.env.DEST_REPOS);
 
-if (!GITHUB_TOKEN || !SOURCE_REPO || !DEST_REPO) {
+if (!GITHUB_TOKEN || !SOURCE_REPO || !DEST_REPOS) {
   console.error('❌ Missing required environment variables. Check your .env file.');
   process.exit(1);
 }
@@ -57,9 +57,9 @@ async function fetchAll(url) {
 }
 
 // Fetch all milestones, applying include/exclude filters
-async function copyMilestones() {
+async function copyMilestones(destRepo) {
   try {
-    const existingMilestones = await fetchAll(`${GITHUB_API}/${DEST_REPO}/milestones`);
+    const existingMilestones = await fetchAll(`${GITHUB_API}/${destRepo}/milestones`);
     const existingMilestoneMap = new Map(existingMilestones.map(m => [m.title, m.number]));
 
     const sourceMilestones = await fetchAll(`${GITHUB_API}/${SOURCE_REPO}/milestones`);
@@ -89,7 +89,7 @@ async function copyMilestones() {
       };
       if (milestone.due_on) payload.due_on = milestone.due_on;
 
-      const { data: newMilestone } = await axios.post(`${GITHUB_API}/${DEST_REPO}/milestones`, payload, HEADERS);
+      const { data: newMilestone } = await axios.post(`${GITHUB_API}/${destRepo}/milestones`, payload, HEADERS);
       milestoneMap[milestone.number] = newMilestone.number;
       console.log(`✅ Created milestone: ${milestone.title} (New ID: ${newMilestone.number})`);
     }
@@ -102,10 +102,10 @@ async function copyMilestones() {
 }
 
 // Fetch and copy issues
-async function copyIssues(milestoneMap) {
+async function copyIssues(milestoneMap, destRepo) {
   try {
     const sourceIssues = await fetchAllIssues(SOURCE_REPO);
-    const existingIssues = await fetchAllIssues(DEST_REPO);
+    const existingIssues = await fetchAllIssues(destRepo);
     const existingIssueMap = new Map(existingIssues.map(issue => [issue.title, issue]));
 
     for (const issue of sourceIssues) {
@@ -138,7 +138,7 @@ async function copyIssues(milestoneMap) {
           existingIssue.milestone?.number !== milestoneMap[issue.milestone.number]
         ) {
           console.log(`🔄 Updating milestone for issue: ${issue.title}`);
-          await axios.patch(`${GITHUB_API}/${DEST_REPO}/issues/${existingIssue.number}`, {
+          await axios.patch(`${GITHUB_API}/${destRepo}/issues/${existingIssue.number}`, {
             milestone: milestoneMap[issue.milestone.number],
           }, HEADERS);
         } else {
@@ -157,7 +157,7 @@ async function copyIssues(milestoneMap) {
         payload.milestone = milestoneMap[issue.milestone.number];
       }
 
-      const { data: newIssue } = await axios.post(`${GITHUB_API}/${DEST_REPO}/issues`, payload, HEADERS);
+      const { data: newIssue } = await axios.post(`${GITHUB_API}/${destRepo}/issues`, payload, HEADERS);
       console.log(`✅ Created issue: ${newIssue.title} (Milestone: ${newIssue.milestone?.title || "None"})`);
     }
   } catch (error) {
@@ -165,11 +165,13 @@ async function copyIssues(milestoneMap) {
   }
 }
 
-async function duplicateRepo() {
-  console.log('🚀 Starting repository duplication...');
-  const milestoneMap = await copyMilestones();
-  await copyIssues(milestoneMap);
+async function duplicateRepo(destRepo) {
+  console.log('🚀 Starting repository duplication...', destRepo);
+  const milestoneMap = await copyMilestones(destRepo);
+  await copyIssues(milestoneMap, destRepo);
   console.log('✅ Repository duplication completed successfully!');
 }
 
-duplicateRepo();
+DEST_REPOS.forEach((destRepo) => {
+  duplicateRepo(destRepo);  
+});
