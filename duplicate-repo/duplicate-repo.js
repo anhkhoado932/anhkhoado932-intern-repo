@@ -125,7 +125,7 @@ async function copyIssues(milestoneMap, destRepo) {
         const existingIssue = existingIssueMap.get(issue.title);
         if (existingIssue.body !== issue.body) {
           console.log(`🔄 Updating body content for issue: ${issue.title}`);
-          await axios.patch(`${GITHUB_API}/${DEST_REPO}/issues/${existingIssue.number}`, {
+          await axios.patch(`${GITHUB_API}/${destRepo}/issues/${existingIssue.number}`, {
             body: issue.body || '',
           }, HEADERS);
         } else {
