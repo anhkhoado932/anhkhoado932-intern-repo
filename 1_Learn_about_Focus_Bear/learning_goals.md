@@ -1,0 +1,5 @@
+- What do you hope to learn from this internship? I am excited to learn about AI technology being used in production and building backend systems that align with business values.
+- What skills are you most excited to develop? I am most excited to get hands-on experience integrating LLM to  real-world solution.
+- What do you think you can contribute to the team? I bring enthusiasm and my problem-solving ability to tackle problems. In addition, I am very interested in improving the predictability of how AI is being utilized in Focus Bear.
+- What is one area you feel less confident in that you’d like to improve? I don't have much experience in UI/UX and would like to learn more on how to specifically design an application for ADHD user.
+- What does success in this internship look like for you? Success in this internship would be expanding my technical knowledge as well as making meaningful contribution to the product, making sure that my work has measurable impact and value.

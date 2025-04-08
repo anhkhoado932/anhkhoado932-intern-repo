@@ -1,0 +1,8 @@
+- What makes Focus Bear different from these apps? 
+    - Unlike other apps that just block distractions, Focus Bear combines distraction blocking with habit formation. Through its guided routines and scheduled focus periods, users can develop better productivity habits while staying focused on their work.
+- If you were a user, why would you choose Focus Bear over competitors?
+    - Focus Bear has structured routines and habit-building features, compared to pure blocking mechanism.
+- What’s one feature that other apps have that Focus Bear doesn’t? 
+    - Competitors like Tiimo and Routinery excel at providing robust visual calendar features with flexible time management and notification systems that especially benefit visually-oriented users.
+- Based on your research, what’s one improvement you think Focus Bear could make? 
+    - Focus Bear can opt for a nicer minimal interface design that may offer less information, more focus for the user.
